@@ -309,12 +309,19 @@ MIT — see `LICENSE`.
 ---
 
 ## Team
-
+11
 > Replace before submission:
+#### Team members
+      Đinh Danh Nam			: XB-DN26-003
+		Huỳnh Sỹ Thương		: XB-DN26-011
+		Nguyễn Duy Nghĩa		: XB-DN26-049
+		Nguyễn Đăng Khôi		: XB-DN26-058
+		Phạm Gia Khanh		: XB-DN26-069
+		Nguyễn Đỗ Khánh Hưng	: XB-DN26-073
+		Đinh Viết Quyết			: XB-DN26-130
+		Nguyễn Đức Tiến		: XB-DN26-133
+		Nguyễn Thị Huy Hoàng	: XB-DN26-136
 
-- <name 1>
-- <name 2>
-- <name 3>
 
 ---
 
