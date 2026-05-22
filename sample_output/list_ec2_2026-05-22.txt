@@ -1,0 +1,4 @@
+﻿EC2 (no filters) ù 2 found:
+------------------------------------------------------------------------------
+  i-0e9c32a356ce476ec    t3.micro     running      Application=TaskIO CostCenter=G11 Environment=dev Name=demo-ec2 Owner=dinhdanhnam1@gmail.com aws:cloudformation:logical-id=DemoInstance aws:cloudformation:stack-id=arn:aws:cloudformation:us-east-1:444203688599:stack/taskio-w6-baseline-20260520215609/16976120-545c-11f1-821f-1205c366bf07 aws:cloudformation:stack-name=taskio-w6-baseline-20260520215609
+  i-0c4b93acf8d2ce91d    t3.micro     running      Application=TaskIO CostCenter=G11 Environment=dev Name=taskio-w6-backend-single-ec2 Owner=dinhdanhnam1@gmail.com aws:cloudformation:logical-id=BackendInstance aws:cloudformation:stack-id=arn:aws:cloudformation:us-east-1:444203688599:stack/taskio-w6-baseline-20260520215609/16976120-545c-11f1-821f-1205c366bf07 aws:cloudformation:stack-name=taskio-w6-baseline-20260520215609 keep=true

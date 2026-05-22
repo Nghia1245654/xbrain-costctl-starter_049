@@ -56,6 +56,7 @@ import boto3
 from collections import defaultdict
 from datetime import date, timedelta
 from botocore.exceptions import ClientError
+import sys
 
 from commands._common import parse_kv
 
@@ -67,10 +68,18 @@ def run(args):
         args.tag   — "key=value" string (REQUIRED)
         args.days  — int, default 7
     """
+    # On Windows, default stdout encoding can be cp1252 which can't encode '→'.
+    # Reconfigure to UTF-8 so piping to files works reliably.
+    if hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8")
+        except Exception:
+            pass
+
     tag_key, tag_val = parse_kv(args.tag)
     days = int(args.days or 7)
     if days <= 0:
-      days = 7
+        days = 7
 
     end = date.today()
     start = end - timedelta(days=days)
@@ -80,38 +89,38 @@ def run(args):
 
     totals = defaultdict(float)
     try:
-      resp = ce.get_cost_and_usage(
-        TimePeriod={"Start": start.isoformat(), "End": end.isoformat()},
-        Granularity="DAILY",
-        Metrics=["UnblendedCost"],
-        Filter={"Tags": {"Key": tag_key, "Values": [tag_val]}},
-        GroupBy=[{"Type": "DIMENSION", "Key": "SERVICE"}],
-      )
+        resp = ce.get_cost_and_usage(
+            TimePeriod={"Start": start.isoformat(), "End": end.isoformat()},
+            Granularity="DAILY",
+            Metrics=["UnblendedCost"],
+            Filter={"Tags": {"Key": tag_key, "Values": [tag_val]}},
+            GroupBy=[{"Type": "DIMENSION", "Key": "SERVICE"}],
+        )
     except ClientError as e:
-      err = e.response.get("Error", {})
-      code = err.get("Code", "Unknown")
-      msg = err.get("Message", str(e))
-      print(f"AWS error [{code}]: {msg}")
-      return
+        err = e.response.get("Error", {})
+        code = err.get("Code", "Unknown")
+        msg = err.get("Message", str(e))
+        print(f"AWS error [{code}]: {msg}")
+        return
 
     for day in resp.get("ResultsByTime", []):
-      for group in day.get("Groups", []):
-        service = (group.get("Keys") or ["Unknown"])[0]
-        amount_s = (
-          group.get("Metrics", {})
-          .get("UnblendedCost", {})
-          .get("Amount", "0")
-        )
-        try:
-          amount = float(amount_s)
-        except ValueError:
-          amount = 0.0
-        totals[service] += amount
+        for group in day.get("Groups", []):
+            service = (group.get("Keys") or ["Unknown"])[0]
+            amount_s = (
+                group.get("Metrics", {})
+                .get("UnblendedCost", {})
+                .get("Amount", "0")
+            )
+            try:
+                amount = float(amount_s)
+            except ValueError:
+                amount = 0.0
+            totals[service] += amount
 
     end_inclusive = end - timedelta(days=1)
-      print(
+    print(
         f"Cost for {tag_key}={tag_val} over last {days} days ({start.isoformat()} → {end_inclusive.isoformat()}):"
-      )
+    )
     print("-" * 60)
 
     items = sorted(totals.items(), key=lambda kv: kv[1], reverse=True)
