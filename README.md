@@ -27,6 +27,7 @@ stubs, make the tests pass, customize for your group, then submit.
 You're done when all 25 pass.
 
 **Current status (G11):** `25/25` tests passing.
+**Implemented (G11):** `list`, `terminate`, `tag`, `cost`, `clean`.
 
 ---
 
@@ -280,6 +281,8 @@ Add a `REFLECTIONS.md` to your repo. Sample prompts:
 - [ ] `make install-dev && make test` shows 10 passed at start
 - [x] Implement `list` → `pytest tests/test_list.py` all green
 - [x] Implement `terminate` → `pytest tests/test_terminate.py` all green
+- [x] Implement `tag` (manual verify via `tag` + `list` roundtrip)
+- [x] Implement `cost` (manual verify vs Cost Explorer)
 - [x] (stretch) Implement `clean` → `pytest tests/test_clean.py` all green
 - [x] `pytest -q` final score reported in README (`25/25 passing`)
 - [ ] Replace `sample_output/*_example.txt` with real outputs from your account

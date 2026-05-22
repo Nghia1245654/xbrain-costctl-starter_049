@@ -55,6 +55,7 @@ Output should match within a few cents.
 import boto3
 from collections import defaultdict
 from datetime import date, timedelta
+from botocore.exceptions import ClientError
 
 from commands._common import parse_kv
 
@@ -66,4 +67,58 @@ def run(args):
         args.tag   — "key=value" string (REQUIRED)
         args.days  — int, default 7
     """
-    raise NotImplementedError("TODO: implement cost — see module docstring")
+    tag_key, tag_val = parse_kv(args.tag)
+    days = int(args.days or 7)
+    if days <= 0:
+      days = 7
+
+    end = date.today()
+    start = end - timedelta(days=days)
+
+    # Cost Explorer is a global-ish endpoint; boto3 commonly requires us-east-1.
+    ce = boto3.client("ce", region_name="us-east-1")
+
+    totals = defaultdict(float)
+    try:
+      resp = ce.get_cost_and_usage(
+        TimePeriod={"Start": start.isoformat(), "End": end.isoformat()},
+        Granularity="DAILY",
+        Metrics=["UnblendedCost"],
+        Filter={"Tags": {"Key": tag_key, "Values": [tag_val]}},
+        GroupBy=[{"Type": "DIMENSION", "Key": "SERVICE"}],
+      )
+    except ClientError as e:
+      err = e.response.get("Error", {})
+      code = err.get("Code", "Unknown")
+      msg = err.get("Message", str(e))
+      print(f"AWS error [{code}]: {msg}")
+      return
+
+    for day in resp.get("ResultsByTime", []):
+      for group in day.get("Groups", []):
+        service = (group.get("Keys") or ["Unknown"])[0]
+        amount_s = (
+          group.get("Metrics", {})
+          .get("UnblendedCost", {})
+          .get("Amount", "0")
+        )
+        try:
+          amount = float(amount_s)
+        except ValueError:
+          amount = 0.0
+        totals[service] += amount
+
+    end_inclusive = end - timedelta(days=1)
+      print(
+        f"Cost for {tag_key}={tag_val} over last {days} days ({start.isoformat()} → {end_inclusive.isoformat()}):"
+      )
+    print("-" * 60)
+
+    items = sorted(totals.items(), key=lambda kv: kv[1], reverse=True)
+    total_cost = 0.0
+    for service, amount in items:
+      total_cost += amount
+      print(f"  {service:<45} $ {amount:8.2f}")
+
+    print("-" * 60)
+    print(f"  {'TOTAL':<45} $ {total_cost:8.2f}")
