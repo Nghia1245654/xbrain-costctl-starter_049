@@ -1,8 +1,9 @@
-﻿Cost for Application=HealthBot over last 7 days (2026-05-15 ΓåÆ 2026-05-21):
-------------------------------------------------------------
+﻿Cost for Application=TaskIO over last 7 days (2026-05-15 -> 2026-05-22):------------------------------------------------------------
   Amazon Elastic Compute Cloud - Compute        $     0.17
   EC2 - Other                                   $     0.01
   Amazon Simple Storage Service                 $     0.00
   AWS Lambda                                    $     0.00
 ------------------------------------------------------------
   TOTAL                                         $     0.18
+###
+không thể cập nhật cost vì đây là tài khoản Workshop Studio

@@ -30,7 +30,7 @@ each group has `Keys=[service_name]` and `Metrics={"UnblendedCost":{"Amount":"1.
 
 EXPECTED OUTPUT FORMAT
 ----------------------
-    Cost for Application=HealthBot over last 7 days (2026-05-14 → 2026-05-21):
+        Cost for Application=HealthBot over last 7 days (2026-05-14 -> 2026-05-21):
     ------------------------------------------------------------
       Amazon Elastic Compute Cloud - Compute        $    8.42
       Amazon Relational Database Service             $    5.18
@@ -68,11 +68,11 @@ def run(args):
         args.tag   — "key=value" string (REQUIRED)
         args.days  — int, default 7
     """
-    # On Windows, default stdout encoding can be cp1252 which can't encode '→'.
-    # Reconfigure to UTF-8 so piping to files works reliably.
+    # Keep output ASCII-friendly for Windows PowerShell redirection.
+    # (Using Unicode arrows often produces mojibake when redirected to a file.)
     if hasattr(sys.stdout, "reconfigure"):
         try:
-            sys.stdout.reconfigure(encoding="utf-8")
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
         except Exception:
             pass
 
@@ -119,7 +119,7 @@ def run(args):
 
     end_inclusive = end - timedelta(days=1)
     print(
-        f"Cost for {tag_key}={tag_val} over last {days} days ({start.isoformat()} → {end_inclusive.isoformat()}):"
+        f"Cost for {tag_key}={tag_val} over last {days} days ({start.isoformat()} -> {end_inclusive.isoformat()}):"
     )
     print("-" * 60)
 

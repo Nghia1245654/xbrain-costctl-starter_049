@@ -4,6 +4,8 @@
 def parse_kv(s):
     """Parse 'key=value' string into a tuple. Raises ValueError on empty key."""
     k, _, v = s.partition("=")
+    k = k.strip()
+    v = v.strip()
     if not k:
         raise ValueError(f"Invalid key=value pair: {s!r}")
     return k, v

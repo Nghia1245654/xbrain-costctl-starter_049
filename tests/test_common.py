@@ -16,6 +16,10 @@ def test_parse_kv_value_with_equals():
     assert parse_kv("Note=key=value") == ("Note", "key=value")
 
 
+def test_parse_kv_strips_whitespace():
+    assert parse_kv(" Owner = alice ") == ("Owner", "alice")
+
+
 def test_parse_kv_no_key_raises():
     with pytest.raises(ValueError):
         parse_kv("=alice")
